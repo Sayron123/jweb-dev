@@ -1,3 +1,3 @@
-# app-dev
+# newbie
 My first repository 
 # Frozen
