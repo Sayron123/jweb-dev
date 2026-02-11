@@ -14,7 +14,8 @@ CORS(app) # Allow your website to talk to the backend
 # We renamed the file to 'index.html' to fix the 404 error
 @app.route('/')
 def index():
-    return send_from_directory(base_dir, 'Clips.html')
+    # We changed the file name to 'main.html' to fix the error
+    return send_from_directory(base_dir, 'main.html')
 
 # --- 2. SERVE CSS, JS, AND IMAGES ---
 # This generic route finds any file you ask for (Clips.css, Clips.js, etc.)
