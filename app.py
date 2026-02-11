@@ -1,12 +1,14 @@
 import os
 import requests
+from flask_cors imprort CORS
 from flask import Flask, send_from_directory, request, jsonify
 
 app = Flask(__name__, static_url_path='', static_folder='.')
+CORS(app)
 
 @app.route('/')
 def serve_index():
-    return send_from_directory('.', 'Riot.html')
+    return send_from_directory('.', 'Clips.html')
 
 @app.route('/<path:path>')
 def serve_static(path):
