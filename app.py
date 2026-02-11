@@ -15,7 +15,7 @@ def serve_static(path):
 @app.route('/api/proxy')
 def proxy_riot_api():
     summoner_name = request.args.get('name')
-    region = "na1" # Change this if you want other regions
+    region = "PH1" # Change this if you want other regions
     API_KEY = os.environ.get("RIOT_API_KEY")
 
     if not API_KEY:
