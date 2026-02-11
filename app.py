@@ -1,6 +1,6 @@
 import os
 import requests
-from flask_cors imprort CORS
+from flask_cors import CORS
 from flask import Flask, send_from_directory, request, jsonify
 
 app = Flask(__name__, static_url_path='', static_folder='.')
