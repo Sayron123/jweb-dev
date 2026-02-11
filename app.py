@@ -8,7 +8,7 @@ CORS(app)
 
 @app.route('/')
 def serve_index():
-    return send_from_directory('.', 'clips.html')
+    return send_from_directory('.', 'clips_temp.html')
 
 @app.route('/<path:path>')
 def serve_static(path):
