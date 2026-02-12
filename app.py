@@ -4,13 +4,14 @@ import os
 import requests
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
+
 app = Flask(__name__, static_url_path='', static_folder=base_dir)
 CORS(app) 
 
 # 2. HOME ROUTE
 @app.route('/')
 def index():
-    return send_from_directory(base_dir, 'main.html')
+    return send_from_directory(os.getcwd(), 'main.html')
 
 # 3. STATIC FILES (CSS/JS)
 @app.route('/<path:path>')
