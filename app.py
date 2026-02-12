@@ -10,7 +10,6 @@ CORS(app)
 # 2. HOME ROUTE
 @app.route('/')
 def index():
-    # We changed the file name to 'main.html' to fix the error
     return send_from_directory(base_dir, 'main.html')
 
 # 3. STATIC FILES (CSS/JS)
