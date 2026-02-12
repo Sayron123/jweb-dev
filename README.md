@@ -1,3 +1,3 @@
-# newbie
-My first repository 
-# Frozen
+# HexGate
+code for HexGate
+# Files_hGate
