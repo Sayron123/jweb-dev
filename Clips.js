@@ -1,134 +1,163 @@
-const API_BASE_URL = "https://web-rclips.onrender.com"; 
-
-
-//  PHASE LOGIC 
-function enterDashboard() {
-    document.getElementById('loginPhase').style.display = 'none';
-    document.getElementById('dashboardPhase').style.display = 'flex';
-}
-
-function logout() {
-    document.getElementById('dashboardPhase').style.display = 'none';
-    document.getElementById('loginPhase').style.display = 'flex';
-}
-
-// --- 2. ACCOUNT VERIFICATION LOGIC (PLACE IT HERE) ---
-document.getElementById('verifyBtn').addEventListener('click', async () => {
-    const name = document.getElementById('riotIdInput').value;
-    const status = document.getElementById('verifyStatus');
+document.addEventListener('DOMContentLoaded', () => {
     
-    if (!name) {
-        status.textContent = "Please enter a Summoner Name.";
-        return;
-    }
+    // --- 0. CONFIGURATION (AUTO-DETECT) ---
+    // We use a relative path so it works on Localhost AND Render automatically
+    const API_BASE_URL = ""; 
 
-    status.style.color = "#888";
-    status.textContent = "Connecting to Hexgate Core...";
+    // --- 1. PAGE NAVIGATION ---
+    window.showPage = function(pageName, btnElement) {
+        const pages = ['homePage', 'trendPage', 'aboutPage', 'searchPage'];
+        
+        pages.forEach(p => {
+            const el = document.getElementById(p);
+            if(el) el.classList.add('d-none');
+        });
 
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/proxy?name=${encodeURIComponent(name)}`);
-        const data = await response.json();
+        const selected = document.getElementById(pageName + 'Page');
+        if(selected) selected.classList.remove('d-none');
 
-        if (response.ok) {
-            status.style.color = "#0ac8b9";
-            status.textContent = `Found: ${data.name}. Level ${data.summonerLevel}`;
-            
-            setTimeout(() => enterDashboard(), 1500);
-        } else {
-            status.style.color = "#d02e36";
-            status.textContent = "Summoner not found. Check spelling.";
+        if (btnElement) {
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            btnElement.classList.add('active');
         }
-    } catch (error) {
-        status.style.color = "#d02e36";
-        status.textContent = "Server connection failed.";
+    };
+
+    // --- 2. API SEARCH LOGIC (CONNECTS TO FLASK) ---
+    const searchInput = document.getElementById('searchInput');
+    if(searchInput) {
+        searchInput.addEventListener('keydown', async (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.trim();
+                
+                if (!query.includes('#')) {
+                    alert("Please use format: Name#Tag (e.g. Faker#KR1)");
+                    return;
+                }
+
+                const [name, tag] = query.split('#');
+                window.showPage('search'); 
+                
+                const spinner = document.getElementById('loadingSpinner');
+                const content = document.getElementById('searchResultContent');
+                
+                if(spinner) spinner.classList.remove('d-none');
+                if(content) content.innerHTML = '';
+
+                try {
+                    // CALLING YOUR PYTHON BACKEND HERE
+                    const res = await fetch(`${API_BASE_URL}/api/proxy?name=${encodeURIComponent(name)}&tag=${encodeURIComponent(tag)}`);
+                    const data = await res.json();
+
+                    if(spinner) spinner.classList.add('d-none');
+
+                    if(data.status) {
+                        content.innerHTML = `<h3 class="text-danger fw-bold brand-font">SUMMONER NOT FOUND</h3><p class="text-muted">Check spelling and region.</p>`;
+                    } else {
+                        content.innerHTML = `
+                            <div class="card hex-card p-5 mx-auto animate-in" style="max-width: 500px; border: 1px solid var(--hex-gold);">
+                                <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/29.jpg" 
+                                     class="rounded-circle mx-auto mb-4 border border-2 border-warning shadow-lg" width="120">
+                                <h2 class="brand-font text-warning fw-bold mb-1">${data.gameName}</h2>
+                                <span class="badge bg-secondary mb-4 px-3 py-2">#${data.tagLine}</span>
+                                
+                                <div class="bg-dark p-4 rounded-4 text-start border border-secondary">
+                                    <small class="text-muted d-block fw-bold mb-1">ENCRYPTED PUUID</small>
+                                    <code class="text-white text-break" style="font-size: 0.85rem;">${data.puuid}</code>
+                                </div>
+                                <button class="btn btn-warning btn-pill w-100 mt-4 fw-bold" onclick="alert('Match History feature coming soon!')">VIEW MATCH HISTORY</button>
+                            </div>
+                        `;
+                    }
+                } catch (err) {
+                    if(spinner) spinner.classList.add('d-none');
+                    content.innerHTML = `<h3 class="text-danger brand-font">CONNECTION ERROR</h3><p class="text-muted">Ensure the Python Backend is running.</p>`;
+                }
+            }
+        });
     }
-});
 
-//  NEWS TABS 
-function filterNews(category, event) {
-    const allNews = document.querySelectorAll('.news-card');
-    const buttons = document.querySelectorAll('.tab-btn');
+    // --- 3. FILTER LOGIC ---
+    window.filterPatch = function(category, btn) {
+        document.querySelectorAll('#homePage .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.patch-card').forEach(card => {
+            card.style.display = (category === 'all' || card.classList.contains(category)) ? 'block' : 'none';
+        });
+    };
 
-    buttons.forEach(btn => btn.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-
-    allNews.forEach(card => {
-        // Don't hide our new Clips, only hide News Items inside the News Grid
-        if (card.closest('#clipsFeed')) return; 
-
-        if (category === 'all') {
-            card.style.display = 'block';
-        } else {
-            if (card.classList.contains(category)) {
+    window.filterTrend = function(category, btn) {
+        document.querySelectorAll('#trendPage .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.trend-card').forEach(card => {
+            if (category === 'all' || card.classList.contains(category)) {
                 card.style.display = 'block';
             } else {
                 card.style.display = 'none';
             }
-        }
-    });
-}
+        });
+    };
 
-//  MODALS 
-function openUploadModal() { document.getElementById('uploadModal').style.display = 'flex'; }
-function closeUploadModal() { document.getElementById('uploadModal').style.display = 'none'; }
-function openSettings() { document.getElementById('settingsModal').style.display = 'flex'; }
-function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
+    // --- 4. THEME & FONT ---
+    window.toggleTheme = function() {
+        const body = document.body;
+        const toggle = document.getElementById('darkModeToggle');
+        if (!toggle.checked) body.classList.add('light-mode');
+        else body.classList.remove('light-mode');
+    };
 
-// File Selection Preview
-document.getElementById('fileInput').addEventListener('change', function(e) {
-    const fileName = e.target.files[0]?.name || "No file selected";
-    document.getElementById('fileName').textContent = fileName;
-});
+    window.changeFont = function(fontName, btn) {
+        btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.body.style.fontFamily = fontName === 'Cinzel' ? "'Cinzel', serif" : "'Inter', sans-serif";
+    };
 
-// ADD CLIP LOGIC 
-document.getElementById('uploadForm').addEventListener('submit', function(e) {
-    e.preventDefault();
+    // --- 5. AUTH ---
+    window.enterDashboard = function() {
+        document.getElementById('loginPhase').classList.add('d-none');
+        document.getElementById('loginPhase').classList.remove('d-flex');
+        document.getElementById('dashboardPhase').classList.remove('d-none');
+    };
 
-    const file = document.getElementById('fileInput').files[0];
-    const game = document.querySelector('input[name="game"]:checked').value;
-    const hero = document.getElementById('heroName').value;
-    const caption = document.getElementById('caption').value;
+    window.logout = function() {
+        document.getElementById('dashboardPhase').classList.add('d-none');
+        document.getElementById('loginPhase').classList.remove('d-none');
+        document.getElementById('loginPhase').classList.add('d-flex');
+    };
 
-    if (!file) {
-        alert("Please attach a video or image file!");
-        return;
+    // --- 6. UPLOAD LOGIC ---
+    const uploadForm = document.getElementById('uploadForm');
+    if(uploadForm) {
+        uploadForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const game = document.querySelector('input[name="game"]:checked').value;
+            const hero = document.getElementById('heroName').value;
+            const caption = document.getElementById('caption').value;
+            
+            let badgeClass = game === 'lol' ? 'lol' : 'val';
+            let badgeText = game === 'lol' ? 'LEAGUE' : 'VALORANT';
+            let bgImage = game === 'lol' ? 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Jinx_0.jpg' : 'https://images.contentstack.io/v3/assets/bltb6530b271fddd0b1/blt6f13e593926ba19d/65a0459d2f2604085427d110/Valorant_Ep8_Act1_Thumbnail.jpg';
+
+            const newCard = `
+                <div class="col-md-4">
+                    <div class="card hex-card h-100">
+                        <div class="hex-card-img" style="background-image: url('${bgImage}')">
+                            <span class="hex-badge ${badgeClass}">${badgeText}</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="fw-bold brand-font text-warning">${hero}</h5>
+                            <p class="text-muted small">${caption}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('emptyState')?.remove();
+            document.getElementById('clipsFeed').insertAdjacentHTML('afterbegin', newCard);
+            
+            const modalEl = document.getElementById('uploadModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+            
+            e.target.reset();
+        });
     }
-
-    // Create a fake URL to display the file locally
-    const fileURL = URL.createObjectURL(file);
-    const isVideo = file.type.startsWith('video');
-
-    const clipHTML = `
-        <div class="news-card clip-item">
-            <div class="news-image" style="height: 200px; background: #000; display: flex; align-items: center; justify-content: center;">
-                ${isVideo 
-                    ? `<video src="${fileURL}" controls style="width:100%; height:100%; object-fit: cover;"></video>` 
-                    : `<img src="${fileURL}" style="width:100%; height:100%; object-fit: cover;">`
-                }
-            </div>
-            <div class="news-content">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                    <span class="news-tag tag-${game}">${game === 'lol' ? 'LEAGUE' : 'VALORANT'}</span>
-                    <span style="font-size: 11px; color: #888;">${hero}</span>
-                </div>
-                <h3>${caption}</h3>
-                <div style="margin-top: 10px; display: flex; gap: 15px; color: #666; font-size: 12px;">
-                    <span><i class="fas fa-heart"></i> 0</span>
-                    <span><i class="fas fa-comment"></i> 0</span>
-                    <span style="cursor:pointer;" onclick="alert('Shared!')"><i class="fas fa-share"></i> Share</span>
-                </div>
-            </div>
-        </div>
-    `;
-
-    document.getElementById('clipsFeed').insertAdjacentHTML('afterbegin', clipHTML);
-    
-    closeUploadModal();
-    e.target.reset();
-    document.getElementById('fileName').textContent = "";
 });
-
-// --- 5. SETTINGS ---
-function changeFont(fontName) {
-    document.body.style.fontFamily = fontName + ", sans-serif";
-}
