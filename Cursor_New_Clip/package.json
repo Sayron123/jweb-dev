@@ -1,0 +1,16 @@
+{
+  "name": "hexgate",
+  "version": "1.0.0",
+  "description": "HEXGATE - Riot Games Inventory Management",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "dev": "tsc --watch"
+  },
+  "keywords": ["riot-games", "league-of-legends", "valorant"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

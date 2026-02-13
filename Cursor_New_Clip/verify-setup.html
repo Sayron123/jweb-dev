@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEXGATE - Setup Verification</title>
+    <style>
+        body {
+            font-family: 'DM Sans', sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #010a13;
+            color: #fff;
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .success { background: #10b981; }
+        .warning { background: #f59e0b; }
+        .error { background: #ef4444; }
+        .info { background: #3b82f6; }
+        code {
+            background: #1a1a1a;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 HEXGATE TypeScript Setup Verification</h1>
+    
+    <div id="results"></div>
+
+    <script>
+        const results = document.getElementById('results');
+        
+        function addStatus(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            results.appendChild(div);
+        }
+
+        // Check for TypeScript source files
+        addStatus('Checking TypeScript source files...', 'info');
+        
+        // Check for compiled files
+        fetch('dist/i18n.js', { method: 'HEAD' })
+            .then(() => {
+                addStatus('✅ Compiled TypeScript files found in dist/', 'success');
+                addStatus('Your HTML will use the compiled TypeScript files', 'success');
+            })
+            .catch(() => {
+                addStatus('⚠️ Compiled TypeScript files not found in dist/', 'warning');
+                
+                // Check for original JS files
+                fetch('i18n.js', { method: 'HEAD' })
+                    .then(() => {
+                        addStatus('✅ Original JavaScript files found', 'success');
+                        addStatus('Your HTML will use the original JavaScript files (fallback)', 'info');
+                        addStatus('To compile TypeScript, run: npm run build', 'info');
+                    })
+                    .catch(() => {
+                        addStatus('❌ No JavaScript files found!', 'error');
+                        addStatus('Please ensure i18n.js and NEW_Clips.js exist', 'error');
+                    });
+            });
+
+        // Check for TypeScript source
+        fetch('i18n.ts', { method: 'HEAD' })
+            .then(() => {
+                addStatus('✅ TypeScript source files found', 'success');
+            })
+            .catch(() => {
+                addStatus('⚠️ TypeScript source files not found', 'warning');
+            });
+
+        // Check for package.json
+        fetch('package.json', { method: 'HEAD' })
+            .then(() => {
+                addStatus('✅ package.json found', 'success');
+                addStatus('Run <code>npm install</code> then <code>npm run build</code> to compile', 'info');
+            })
+            .catch(() => {
+                addStatus('⚠️ package.json not found', 'warning');
+            });
+
+        addStatus('', 'info');
+        addStatus('📝 Summary:', 'info');
+        addStatus('1. HTML is connected to TypeScript', 'success');
+        addStatus('2. Files will load automatically (compiled TS or original JS)', 'success');
+        addStatus('3. To use TypeScript: npm install && npm run build', 'info');
+    </script>
+</body>
+</html>

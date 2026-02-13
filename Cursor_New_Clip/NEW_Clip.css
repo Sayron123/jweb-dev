@@ -1,0 +1,266 @@
+/* Theme variables for Tailwind + JS (e.g. toggleTheme) */
+:root {
+    --hex-gold: #c89b3c;
+    --hex-bg: #010a13;
+    --hex-panel: #0a0a0a;
+    --hex-text: #ffffff;
+    --hex-border: #333;
+}
+
+/* Champion-based color themes */
+body.theme-ahri {
+    --hex-gold: #d946ef; /* Ahri - Magenta/Pink */
+    --hex-bg: #1a0a1f;
+    --hex-panel: #2d0a3a;
+    --hex-border: #4a1a5c;
+}
+
+body.theme-yasuo {
+    --hex-gold: #0ea5e9; /* Yasuo - Sky Blue */
+    --hex-bg: #0a1a2e;
+    --hex-panel: #0f2a47;
+    --hex-border: #1e3a5f;
+}
+
+body.theme-garen {
+    --hex-gold: #10b981; /* Garen - Emerald Green */
+    --hex-bg: #0a1f15;
+    --hex-panel: #0f2e20;
+    --hex-border: #1e4d33;
+}
+
+body.theme-kalista {
+    --hex-gold: #ef4444; /* Kalista - Red/Crimson */
+    --hex-bg: #1f0a0a;
+    --hex-panel: #3a0f0f;
+    --hex-border: #5c1a1a;
+}
+
+body.light-mode {
+    --hex-bg: #f0f0f5;
+    --hex-panel: #ffffff;
+    --hex-text: #1a1a1a;
+    --hex-border: #ddd;
+    --hex-gold: #b08d55;
+}
+
+body.light-mode.theme-ahri {
+    --hex-gold: #c026d3;
+    --hex-bg: #fdf2f8;
+    --hex-panel: #ffffff;
+    --hex-border: #f9a8d4;
+}
+
+body.light-mode.theme-yasuo {
+    --hex-gold: #0284c7;
+    --hex-bg: #eff6ff;
+    --hex-panel: #ffffff;
+    --hex-border: #93c5fd;
+}
+
+body.light-mode.theme-garen {
+    --hex-gold: #059669;
+    --hex-bg: #ecfdf5;
+    --hex-panel: #ffffff;
+    --hex-border: #6ee7b7;
+}
+
+body.light-mode.theme-kalista {
+    --hex-gold: #dc2626;
+    --hex-bg: #fef2f2;
+    --hex-panel: #ffffff;
+    --hex-border: #fca5a5;
+}
+
+/* Sidebar: show link text and expand logo on hover */
+.sidebar-float:hover .link-text { opacity: 1; }
+.sidebar-float:hover .nav-logo-img { width: 40px; margin-right: 10px; }
+
+/* JS-toggled active states: only the current page nav link shines */
+.nav-link.active,
+.nav-page-link.active { background-color: var(--hex-gold) !important; color: #000 !important; font-weight: bold; }
+.filter-btn.active { background: var(--hex-gold); color: #000; border-color: var(--hex-gold); font-weight: bold; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
+
+/* JS compatibility */
+.d-none { display: none !important; }
+.text-danger { color: #dc2626 !important; }
+.text-muted { color: #6b7280 !important; }
+.fw-bold { font-weight: 700 !important; }
+.brand-font { font-family: 'Cinzel', serif !important; }
+.hex-card { background: var(--hex-panel); border: 1px solid var(--hex-border); border-radius: 1.25rem; overflow: hidden; }
+.btn-pill { border-radius: 9999px !important; }
+.btn { display: inline-block; padding: 0.5rem 1rem; font-weight: 600; text-align: center; cursor: pointer; border: none; }
+.btn-warning { background: var(--hex-gold); color: #000; }
+.badge { display: inline-block; padding: 0.35rem 0.75rem; font-size: 0.875rem; border-radius: 0.375rem; }
+.bg-secondary { background-color: #4b5563; }
+.bg-dark { background-color: var(--hex-panel); }
+.rounded-circle { border-radius: 50% !important; }
+.rounded-4 { border-radius: 1rem !important; }
+.text-break { word-break: break-all; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.mb-1, .mb-4 { margin-bottom: 0.25rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mt-4 { margin-top: 1rem; }
+.d-block { display: block; }
+.border { border-width: 1px; }
+.border-2 { border-width: 2px; }
+.border-secondary { border-color: #4b5563; }
+.border-warning { border-color: var(--hex-gold); }
+.shadow-lg { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); }
+.text-white { color: #fff !important; }
+.text-warning { color: var(--hex-gold) !important; }
+.p-4 { padding: 1rem; }
+.p-5 { padding: 1.5rem; }
+.text-start { text-align: left; }
+.w-100 { width: 100% !important; }
+.animate-in { animation: fadeIn 0.5s ease-in-out; }
+
+/* Game category visual selection */
+.game-label-selected {
+    border-color: var(--hex-gold) !important;
+    color: var(--hex-gold) !important;
+    font-weight: 600;
+}
+
+/* Dark Mode Toggle Switch */
+.theme-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+}
+
+.theme-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.theme-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #4a5568;
+    transition: 0.3s;
+    border-radius: 30px;
+}
+
+.theme-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-toggle-switch input:checked + .theme-toggle-slider {
+    background-color: var(--hex-gold);
+}
+
+.theme-toggle-switch input:checked + .theme-toggle-slider:before {
+    transform: translateX(30px);
+}
+
+.theme-toggle-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.theme-toggle-icon.moon {
+    left: 8px;
+    color: white;
+    z-index: 1;
+}
+
+.theme-toggle-icon.sun {
+    right: 8px;
+    color: #fbbf24;
+    z-index: 1;
+}
+
+.theme-toggle-switch input:checked ~ .theme-toggle-icon.moon {
+    opacity: 0;
+}
+
+.theme-toggle-switch input:checked ~ .theme-toggle-icon.sun {
+    opacity: 1;
+}
+
+.theme-toggle-switch input:not(:checked) ~ .theme-toggle-icon.moon {
+    opacity: 1;
+}
+
+.theme-toggle-switch input:not(:checked) ~ .theme-toggle-icon.sun {
+    opacity: 0;
+}
+
+/* Theme button active state */
+.theme-btn.active {
+    border-color: var(--hex-gold) !important;
+    box-shadow: 0 0 0 2px var(--hex-gold);
+}
+
+/* Toast Animation */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-slide-in-right {
+    animation: slideInRight 0.3s ease-out;
+}
+
+/* Ensure text visibility in light mode */
+body.light-mode .text-gray-500 {
+    color: #6b7280 !important;
+}
+
+body.light-mode .text-gray-400 {
+    color: #9ca3af !important;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--hex-panel);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--hex-gold);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--hex-gold);
+    opacity: 0.8;
+}
